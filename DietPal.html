@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DietPal - Your iPhone Diet Assistant</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --primary-light: #E8F5E9;
+      --secondary: #2196F3;
+      --text: #333;
+      --text-light: #666;
+      --background: #f9f9f9;
+      --card: #fff;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      padding: 0 16px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      font-size: 28px;
+    }
+
+    .tab-bar {
+      display: flex;
+      background-color: var(--card);
+      position: sticky;
+      top: 70px;
+      z-index: 99;
+      box-shadow: var(--shadow);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 14px;
+      color: var(--text-light);
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+      font-weight: 600;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px 0;
+      animation: fadeIn 0.5s;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title i {
+      color: var(--primary);
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress {
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 5px;
+      transition: width 0.5s;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .stat {
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .meal-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .meal-item:last-child {
+      border-bottom: none;
+    }
+
+    .meal-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      color: var(--primary);
+    }
+
+    .meal-details {
+      flex: 1;
+    }
+
+    .meal-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .meal-macros {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .meal-calories {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .add-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    .water-tracker {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .water-glass {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e0f7fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--secondary);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .water-glass.active {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .food-search {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .food-search input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--radius);
+      font-size: 16px;
+    }
+
+    .food-search i {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+
+    .food-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .food-name {
+      font-weight: 500;
+    }
+
+    .food-calories {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .goal-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .goal-item:last-child {
+      border-bottom: none;
+    }
+
+    .goal-label {
+      font-weight: 500;
+    }
+
+    .goal-value {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .tip-card {
+      background-color: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .tip-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--primary);
+    }
+
+    .tip-content {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      color: var(--text-light);
+      font-size: 12px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <span class="logo-icon">🥗</span>
+        <span>DietPal</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="meals">Meals</div>
+    <div class="tab" data-tab="foods">Foods</div>
+    <div class="tab" data-tab="goals">Goals</div>
+  </div>
+
+  <div class="container">
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="dashboard">
+      <div class="card">
+        <div class="card-title">
+          <i>📊</i> Daily Progress
+        </div>
+        <div class="progress-bar">
+          <div class="progress" id="calorie-progress" style="width: 65%"></div>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value" id="calories-consumed">1300</div>
+            <div class="stat-label">Calories</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="protein-grams">65g</div>
+            <div class="stat-label">Protein</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="carbs-grams">150g</div>
+            <div class="stat-label">Carbs</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="fat-grams">45g</div>
+            <div class="stat-label">Fat</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <i>💧</i> Water Intake
+        </div>
+        <div class="water-tracker">
+          <div class="water-glass active">1</div>
+          <div class="water-glass active">2</div>
+          <div class="water-glass active">3</div>
+          <div class="water-glass active">4</div>
+          <div class="water-glass">5</div>
+          <div class="water-glass">6</div>
+          <div class="water-glass">7</div>
+          <div class="water-glass">8</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <i>🍽️</i> Today's Meals
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🍳</div>
+          <div class="meal-details">
+            <div class="meal-name">Breakfast</div>
+            <div class="meal-macros">Oatmeal with berries</div>
+          </div>
+          <div class="meal-calories">350 cal</div>
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🥗</div>
+          <div class="meal-details">
+            <div class="meal-name">Lunch</div>
+            <div class="meal-macros">Chicken salad</div>
+          </div>
+          <div class="meal-calories">450 cal</div>
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🍎</div>
+          <div class="meal-details">
+            <div class="meal-name">Snack</div>
+            <div class="meal-macros">Apple with peanut butter</div>
+          </div>
+          <div class="meal-calories">200 cal</div>
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🍲</div>
+          <div class="meal-details">
+            <div class="meal-name">Dinner</div>
+            <div class="meal-macros">Salmon with vegetables</div>
+          </div>
+          <div class="meal-calories">500 cal</div>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-title">Daily Tip</div>
+        <div class="tip-content">Drink a glass of water 30 minutes before meals to help control appetite and improve digestion.</div>
+      </div>
+    </div>
+
+    <!-- Meals Tab -->
+    <div class="tab-content" id="meals">
+      <div class="card">
+        <div class="card-title">
+          <i>📅</i> Meal Plan
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🍳</div>
+          <div class="meal-details">
+            <div class="meal-name">Breakfast</div>
+            <div class="meal-macros">Oatmeal with berries</div>
+          </div>
+          <div class="meal-calories">350 cal</div>
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🥗</div>
+          <div class="meal-details">
+            <div class="meal-name">Lunch</div>
+            <div class="meal-macros">Chicken salad</div>
+          </div>
+          <div class="meal-calories">450 cal</div>
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🍎</div>
+          <div class="meal-details">
+            <div class="meal-name">Snack</div>
+            <div class="meal-macros">Apple with peanut butter</div>
+          </div>
+          <div class="meal-calories">200 cal</div>
+        </div>
+        <div class="meal-item">
+          <div class="meal-icon">🍲</div>
+          <div class="meal-details">
+            <div class="meal-name">Dinner</div>
+            <div class="meal-macros">Salmon with vegetables</div>
+          </div>
+          <div class="meal-calories">500 cal</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <i>📝</i> Add Custom Meal
+        </div>
+        <div style="margin-top: 15px;">
+          <input type="text" placeholder="Meal name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--radius); margin-bottom: 10px;">
+          <input type="text" placeholder="Calories" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--radius); margin-bottom: 10px;">
+          <button style="width: 100%; padding: 12px; background-color: var(--primary); color: white; border: none; border-radius: var(--radius); font-weight: 600;">Add Meal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Foods Tab -->
+    <div class="tab-content" id="foods">
+      <div class="food-search">
+        <input type="text" placeholder="Search foods...">
+        <i>🔍</i>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <i>🍎</i> Common Foods
+        </div>
+        <div class="food-item">
+          <div class="food-name">Apple</div>
+          <div class="food-calories">95 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Banana</div>
+          <div class="food-calories">105 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Chicken Breast (100g)</div>
+          <div class="food-calories">165 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Brown Rice (1 cup)</div>
+          <div class="food-calories">215 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Broccoli (1 cup)</div>
+          <div class="food-calories">55 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Almonds (1 oz)</div>
+          <div class="food-calories">164 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Greek Yogurt (1 cup)</div>
+          <div class="food-calories">150 cal</div>
+        </div>
+        <div class="food-item">
+          <div class="food-name">Salmon (100g)</div>
+          <div class="food-calories">208 cal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals Tab -->
+    <div class="tab-content" id="goals">
+      <div class="card">
+        <div class="card-title">
+          <i>🎯</i> Daily Goals
+        </div>
+        <div class="goal-item">
+          <div class="goal-label">Calories</div>
+          <div class="goal-value">2000</div>
+        </div>
+        <div class="goal-item">
+          <div class="goal-label">Protein</div>
+          <div class="goal-value">75g</div>
+        </div>
+        <div class="goal-item">
+          <div class="goal-label">Carbs</div>
+          <div class="goal-value">225g</div>
+        </div>
+        <div class="goal-item">
+          <div class="goal-label">Fat</div>
+          <div class="goal-value">67g</div>
+        </div>
+        <div class="goal-item">
+          <div class="goal-label">Water</div>
+          <div class="goal-value">8 glasses</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <i>⚙️</i> Update Goals
+        </div>
+        <div style="margin-top: 15px;">
+          <input type="text" placeholder="Daily calories" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--radius); margin-bottom: 10px;">
+          <input type="text" placeholder="Protein (g)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--radius); margin-bottom: 10px;">
+          <input type="text" placeholder="Carbs (g)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--radius); margin-bottom: 10px;">
+          <input type="text" placeholder="Fat (g)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--radius); margin-bottom: 10px;">
+          <button style="width: 100%; padding: 12px; background-color: var(--primary); color: white; border: none; border-radius: var(--radius); font-weight: 600;">Update Goals</button>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-title">Weight Loss Tip</div>
+        <div class="tip-content">Aim for a calorie deficit of 500 calories per day to lose about 1 pound per week. This is a safe and sustainable rate of weight loss.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="add-button">
+    +
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>DietPal &copy; 2023 - Your Personal Nutrition Assistant</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching functionality
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs and contents
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    // Water tracking functionality
+    document.querySelectorAll('.water-glass').forEach(glass => {
+      glass.addEventListener('click', () => {
+        glass.classList.toggle('active');
+      });
+    });
+    // Add button functionality
+    document.querySelector('.add-button').addEventListener('click', () => {
+      alert('Add new meal or food item');
+    });
+    // Update progress based on consumed calories
+    function updateProgress() {
+      const consumed = parseInt(document.getElementById('calories-consumed').textContent);
+      const goal = 2000; // Default goal
+      const percentage = (consumed / goal) * 100;
+      document.getElementById('calorie-progress').style.width = Math.min(percentage, 100) + '%';
+    }
+    // Initialize progress
+    updateProgress();
+  </script>
+</body>
+
+</html>
